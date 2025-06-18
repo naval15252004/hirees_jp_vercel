@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import { SAVED_JOBS_API_END_POINT } from "@/utils/constant";
 
 function Job({ job }) {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ function Job({ job }) {
       const checkSavedStatus = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/api/savedjobs/check/${job.jobId}`,
+            `${SAVED_JOBS_API_END_POINT}/check/${job.jobId}`,
             { withCredentials: true }
           );
           setIsSaved(response.data.isSaved);
@@ -69,14 +70,14 @@ function Job({ job }) {
       setIsLoading(true);
       if (!isSaved) {
         await axios.post(
-          "http://localhost:8000/api/savedjobs/save",
+          `${SAVED_JOBS_API_END_POINT}/save`,
           { jobId: job.jobId },
           { withCredentials: true }
         );
         setIsSaved(true);
       } else {
         await axios.delete(
-          `http://localhost:8000/api/savedjobs/unsave/${job.jobId}`,
+          `${SAVED_JOBS_API_END_POINT}/unsave/${job.jobId}`,
           { withCredentials: true }
         );
         setIsSaved(false);

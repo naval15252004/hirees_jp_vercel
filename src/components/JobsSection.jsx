@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Eye, MoreVertical, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
-import { APPLICATION_API_END_POINT } from "@/utils/constant";
+import { APPLICATION_API_END_POINT, SAVED_JOBS_API_END_POINT } from "@/utils/constant";
 import {
   Table,
   TableBody,
@@ -113,8 +113,7 @@ function JobsSection() {
 
   const fetchSavedJobs = async () => {
     try {
-      setIsLoading(true);
-      const res = await axios.get("http://localhost:8000/api/savedjobs/saved", {
+      const res = await axios.get(`${SAVED_JOBS_API_END_POINT}/saved`, {
         withCredentials: true,
       });
       setSavedJobs(res.data.savedJobs || []);
@@ -127,7 +126,7 @@ function JobsSection() {
 
   const handleRemoveSavedJob = async (jobId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/savedjobs/saved`, {
+      await axios.delete(`${SAVED_JOBS_API_END_POINT}/saved`, {
         data: { jobId },
         withCredentials: true,
       });
@@ -135,7 +134,8 @@ function JobsSection() {
     } catch (error) {
       console.error("Error removing saved job:", error);
     }
-   };
+  };
+
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = activeTab === "applied"

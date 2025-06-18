@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import Navbar from "./shared/Navbar";
 import useGetCompanyById from "@/hooks/useGetCompanyById";
 import PropTypes from "prop-types";
+import { JOB_API_END_POINT } from "@/utils/constant";
 
 const CompanyJobs = () => {
   const { companyId } = useParams();
@@ -38,7 +39,7 @@ const CompanyJobs = () => {
   const fetchCompanyJobs = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/job/getCompanyJobs/${companyId}`
+        `${JOB_API_END_POINT}/getCompanyJobs/${companyId}`
       );
       const data = await response.json();
       if (data.success) {

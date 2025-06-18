@@ -10,6 +10,7 @@ import professionalImage from "../../assets/professionals.svg";
 import Navbar from "../shared/Navbar";
 import Footer from "../Footer";
 import ForgotPassword from "./ForgotPassword";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -67,6 +68,14 @@ const Login = () => {
         withCredentials: true,
       });
       if (res.data.success) {
+        // Store token in cookie
+        if (res.data.token) {
+          Cookies.set("token", res.data.token, { 
+            expires: 7, // expires in 7 days
+            secure: true,
+            sameSite: "strict"
+          });
+        }
         localStorage.setItem("user", JSON.stringify(res.data.user));
         dispatch(setUser(res.data.user));
         navigate("/");

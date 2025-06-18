@@ -31,7 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { APPLICATION_API_END_POINT, JOB_API_END_POINT, COMPANY_API_END_POINT } from "@/utils/constant";
+import { APPLICATION_API_END_POINT, JOB_API_END_POINT, COMPANY_API_END_POINT, SAVED_JOBS_API_END_POINT } from "@/utils/constant";
 import { setLoading } from "@/redux/authSlice";
 import { setSingleJob } from "@/redux/jobSlice";
 import { toast } from "sonner";
@@ -117,21 +117,19 @@ function JobDescription() {
 
   // Check if job is saved when component mounts
   useEffect(() => {
-    if (isAuthenticated) {
-      const checkSavedStatus = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:8000/api/savedjobs/check/${jobId}`,
-            { withCredentials: true }
-          );
-          setIsSaved(response.data.isSaved);
-        } catch (error) {
-          console.error("Error checking saved status:", error);
-        }
-      };
-      checkSavedStatus();
-    }
-  }, [jobId, isAuthenticated]);
+    const checkSavedStatus = async () => {
+      try {
+        const response = await axios.get(
+          `${SAVED_JOBS_API_END_POINT}/check/${jobId}`,
+          { withCredentials: true }
+        );
+        setIsSaved(response.data.isSaved);
+      } catch (error) {
+        console.error("Error checking saved status:", error);
+      }
+    };
+    checkSavedStatus();
+  }, [jobId]);
 
   const handleAction = (action) => {
     if (!isAuthenticated) {
@@ -150,14 +148,14 @@ function JobDescription() {
       setIsLoading(true);
       if (!isSaved) {
         await axios.post(
-          "http://localhost:8000/api/savedjobs/save",
+          `${SAVED_JOBS_API_END_POINT}/save`,
           { jobId },
           { withCredentials: true }
         );
         setIsSaved(true);
       } else {
         await axios.delete(
-          `http://localhost:8000/api/savedjobs/unsave/${jobId}`,
+          `${SAVED_JOBS_API_END_POINT}/unsave/${jobId}`,
           { withCredentials: true }
         );
         setIsSaved(false);
