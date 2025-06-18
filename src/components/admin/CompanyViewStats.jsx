@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { USER_API_END_POINT } from '@/utils/constant';
+import axios from 'axios';
 
 const CompanyViewStats = ({ companyId }) => {
   const [loading, setLoading] = useState(true);
@@ -11,16 +12,11 @@ const CompanyViewStats = ({ companyId }) => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch(`${USER_API_END_POINT}/companies/${companyId}/view-stats`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-User-Email': localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).email : null
-          }
+        const response = await axios.get(`${USER_API_END_POINT}/companies/${companyId}/view-stats`, {
+          withCredentials: true
         });
 
-        const data = await response.json();
+        const data = await response.data;
 
         if (data.success) {
           setStatsData(data.data);

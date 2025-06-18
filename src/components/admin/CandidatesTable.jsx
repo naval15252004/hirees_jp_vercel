@@ -12,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import axios from 'axios';
 
 
 // Import custom components
@@ -84,44 +85,42 @@ const CandidatesViewer = () => {
         }
 
         // Get minimal student data
-        const studentsResponse = await fetch(`${USER_API_END_POINT}/students-minimal`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email: userId })
-        });
+        const studentsResponse = await axios.post(`${USER_API_END_POINT}/students-minimal`, 
+          { email: userId },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            withCredentials: true
+          }
+        );
 
-        const studentsData = await studentsResponse.json();
-
-        if (studentsData.success) {
-          setStudents(studentsData.data);
+        if (studentsResponse.data.success) {
+          setStudents(studentsResponse.data.data);
         } else {
-          throw new Error(studentsData.message || "Failed to fetch students");
+          throw new Error(studentsResponse.data.message || "Failed to fetch students");
         }
 
         // Get company data using user ID
-        const companyResponse = await fetch(`${USER_API_END_POINT}/companies/user/${userId}`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email: userId })
-        });
+        const companyResponse = await axios.post(`${USER_API_END_POINT}/companies/user/${userId}`, 
+          { email: userId },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            withCredentials: true
+          }
+        );
 
-        const companyData = await companyResponse.json();
-
-        if (companyData.success) {
+        if (companyResponse.data.success) {
           setViewCounts({
-            companyViews: companyData.data.remainingViews || 0,
-            personalViews: companyData.data.personalViewCount || 0,
-            recruiterName: companyData.data.recruiterName || "Recruiter"
+            companyViews: companyResponse.data.data.remainingViews || 0,
+            personalViews: companyResponse.data.data.personalViewCount || 0,
+            recruiterName: companyResponse.data.data.recruiterName || "Recruiter"
           });
-          setCompanyId(companyData.data.companyId);
+          setCompanyId(companyResponse.data.data.companyId);
         } else {
-          throw new Error(companyData.message || "Failed to fetch company data");
+          throw new Error(companyResponse.data.message || "Failed to fetch company data");
         }
       } catch (error) {
         console.error("Error fetching data:", error);

@@ -71,13 +71,17 @@ const Login = () => {
         withCredentials: true,
       });
       if (res.data.success) {
-        // Store token in cookie and Redux
+        // Store token in cookie, localStorage and Redux
         if (res.data.token) {
+          // Store in cookie
           Cookies.set("token", res.data.token, { 
             expires: 7, // expires in 7 days
             path: '/', // make cookie available for all paths
             sameSite: 'lax' // less restrictive than 'strict'
           });
+          
+          // Store in localStorage
+          localStorage.setItem("token", res.data.token);
           
           // Set token in Redux
           dispatch(setToken(res.data.token));

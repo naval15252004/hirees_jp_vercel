@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { FileSearch, Briefcase, MapPin, Filter } from 'lucide-react';
 import Job from './Job';
@@ -8,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import axios from 'axios';
 
 function Browse() {
   const [jobs, setJobs] = useState([]);
@@ -40,7 +40,9 @@ function Browse() {
       if (keyword) params.append('keyword', keyword);
       if (location) params.append('location', location);
 
-      const response = await fetch(`${JOB_API_END_POINT}/get?${params.toString()}`);
+      const response = await axios.get(`${JOB_API_END_POINT}/get?${params.toString()}`, {
+        withCredentials: true
+      });
       if (!response.ok) throw new Error('Failed to fetch jobs');
 
       const data = await response.json();

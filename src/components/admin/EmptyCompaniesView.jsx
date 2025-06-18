@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import Footer from "../Footer";
+import axios from "axios";
 
 const EmptyCompaniesView = () => {
   const navigate = useNavigate();
@@ -54,16 +55,15 @@ const EmptyCompaniesView = () => {
     const fetchCompanies = async () => {
       try {
         // Fetching company data from your backend route
-        const response = await fetch(`${COMPANY_API_END_POINT}/getall`, {
-          method: "GET",
-          credentials: "include",
+        const response = await axios.get(`${COMPANY_API_END_POINT}/getall`, {
+          withCredentials: true
         });
 
         if (!response.ok) {
           throw new Error("Failed to fetch companies.");
         }
 
-        const data = await response.json();
+        const data = await response.data;
         setCompanies(data);
         setFilteredCompanies(data);
       } catch (error) {
@@ -100,13 +100,11 @@ const EmptyCompaniesView = () => {
       }
 
       // Sending the join request to the backend
-      const response = await fetch(`${COMPANY_API_END_POINT}/request-join`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ companyId: company.companyId, userId }),
+      const response = await axios.post(`${COMPANY_API_END_POINT}/request-join`, {
+        companyId: company.companyId,
+        userId
+      }, {
+        withCredentials: true
       });
 
       if (!response.ok) {
@@ -114,7 +112,7 @@ const EmptyCompaniesView = () => {
         throw new Error(errorData.message || "Failed to request join");
       }
 
-      const data = await response.json();
+      const data = await response.data;
       setAdminEmail(data.adminEmail);
 
       // Open OTP dialog and set current company
@@ -144,17 +142,12 @@ const EmptyCompaniesView = () => {
       }
 
       // Verifying OTP and joining company
-      const response = await fetch(`${COMPANY_API_END_POINT}/verify-join`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          companyId: currentCompany.companyId,
-          userId,
-          code: otp,
-        }),
+      const response = await axios.post(`${COMPANY_API_END_POINT}/verify-join`, {
+        companyId: currentCompany.companyId,
+        userId,
+        code: otp,
+      }, {
+        withCredentials: true
       });
 
       if (!response.ok) {

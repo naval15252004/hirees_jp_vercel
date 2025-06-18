@@ -1,6 +1,7 @@
 // ChatBot.jsx
 import React, { useState, useRef, useEffect, createContext, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 // Website data context
 const WebsiteDataContext = createContext({});
@@ -148,12 +149,13 @@ const ChatBot = () => {
 
             console.log("Sending request to Gemini API...");
 
-            const response = await fetch(endpoint, {
-                method: 'POST',
+            const response = await axios.post(endpoint, {
+                messages: messages
+            }, {
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(payload),
+                withCredentials: true
             });
 
             if (!response.ok) {

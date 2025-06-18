@@ -15,6 +15,7 @@ import Navbar from "./shared/Navbar";
 import Footer from "./Footer";
 import TopCompanies from "./TopCompanies";
 import { COMPANY_API_END_POINT } from "@/utils/constant";
+import axios from "axios";
 
 // Card component for displaying company information
 const CompanyCard = ({ company, onViewJobs }) => {
@@ -139,8 +140,10 @@ const Company = () => {
   // Fetch companies from API
   const fetchCompanies = async () => {
     try {
-      const response = await fetch(`${COMPANY_API_END_POINT}/companyinfo`);
-      const data = await response.json();
+      const response = await axios.get(`${COMPANY_API_END_POINT}/companyinfo`, {
+        withCredentials: true
+      });
+      const data = await response.data;
       if (data.status) {
         setCompanies(data.companies);
         setFilteredCompanies(data.companies);

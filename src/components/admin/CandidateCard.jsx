@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { USER_API_END_POINT } from '@/utils/constant';
 import { formatDistanceToNow } from 'date-fns';
+import axios from 'axios';
 
 const CandidateCard = ({ student, onViewFullInfo }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -55,19 +56,14 @@ const CandidateCard = ({ student, onViewFullInfo }) => {
       }
 
       // Call the API to get full student info with view tracking
-      const response = await fetch(
-        `${USER_API_END_POINT}/students/${student._id}`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email: userId, viewerId: userId })
-        }
-      );
+      const response = await axios.post(`${USER_API_END_POINT}/students/${student._id}`, {
+        email: userId,
+        viewerId: userId
+      }, {
+        withCredentials: true
+      });
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         setFullInfo(data.data);

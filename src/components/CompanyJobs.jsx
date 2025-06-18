@@ -20,6 +20,7 @@ import Navbar from "./shared/Navbar";
 import useGetCompanyById from "@/hooks/useGetCompanyById";
 import PropTypes from "prop-types";
 import { JOB_API_END_POINT } from "@/utils/constant";
+import axios from "axios";
 
 const CompanyJobs = () => {
   const { companyId } = useParams();
@@ -38,10 +39,10 @@ const CompanyJobs = () => {
 
   const fetchCompanyJobs = async () => {
     try {
-      const response = await fetch(
-        `${JOB_API_END_POINT}/getCompanyJobs/${companyId}`
-      );
-      const data = await response.json();
+      const response = await axios.get(`${JOB_API_END_POINT}/company/${companyId}`, {
+        withCredentials: true
+      });
+      const data = await response.data;
       if (data.success) {
         setJobs(data.data);
       }

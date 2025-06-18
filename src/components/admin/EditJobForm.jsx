@@ -3,6 +3,7 @@ import { JOB_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
+import axios from "axios";
 
 const Button = ({ children, variant = "primary", type = "button", disabled, onClick, className = "" }) => {
   const baseStyles = "px-4 py-2 rounded-md font-medium transition-colors";
@@ -158,10 +159,10 @@ const EditJobForm = () => {
     const fetchJob = async () => {
       try {
         const jobId = window.location.pathname.split('/').pop();
-        const response = await fetch(`${JOB_API_END_POINT}/get/${jobId}`, {
-          credentials: 'include',
+        const response = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
+          withCredentials: true
         });
-        const data = await response.json();
+        const data = response.data;
 
         if (data.status && data.job) {
           const job = data.job;
@@ -255,16 +256,14 @@ const EditJobForm = () => {
         hiringTeam: JSON.stringify(jobData.hiringTeam)
       };
 
-      const response = await fetch(`${JOB_API_END_POINT}/${jobId}`, {
-        method: "PUT",
+      const response = await axios.put(`${JOB_API_END_POINT}/${jobId}`, formattedData, {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'multipart/form-data'
         },
-        credentials: 'include',
-        body: JSON.stringify(formattedData),
+        withCredentials: true
       });
 
-      if (response.ok) {
+      if (response.data.status) {
         toast.message("Job Updated successfully");
         navigate('/admin/jobs');
       } else {
