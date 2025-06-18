@@ -1,37 +1,9 @@
-// import { createSlice } from "@reduxjs/toolkit";
-
-// // Check for existing user in localStorage when the app loads
-// const initialState = {
-//   loading: false,
-//   user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
-// };
-
-// const authSlice = createSlice({
-//   name: "auth",
-//   initialState,
-//   reducers: {
-//     setLoading: (state, action) => {
-//       state.loading = action.payload;
-//     },
-//     setUser: (state, action) => {
-//       state.user = action.payload;
-//       // Persist the user data in localStorage
-//       if (action.payload) {
-//         localStorage.setItem("user", JSON.stringify(action.payload));
-//       } else {
-//         localStorage.removeItem("user"); // Remove user data on logout
-//       }
-//     },
-//   },
-// });
-
-// export const { setLoading, setUser } = authSlice.actions;
-// export default authSlice.reducer;
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   loading: false,
   user: null,
+  token: null
 };
 
 const authSlice = createSlice({
@@ -44,8 +16,15 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+    setToken: (state, action) => {
+      state.token = action.payload;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+    }
   },
 });
 
-export const { setLoading, setUser } = authSlice.actions;
+export const { setLoading, setUser, setToken, logout } = authSlice.actions;
 export default authSlice.reducer;

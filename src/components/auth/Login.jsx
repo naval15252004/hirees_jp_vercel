@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading, setUser } from "@/redux/authSlice";
+import { setLoading, setUser, setToken } from "@/redux/authSlice";
 import { Loader2, Eye, EyeOff, Mail } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -11,6 +11,9 @@ import Navbar from "../shared/Navbar";
 import Footer from "../Footer";
 import ForgotPassword from "./ForgotPassword";
 import Cookies from "js-cookie";
+
+// Configure axios defaults
+axios.defaults.withCredentials = true;
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -68,14 +71,22 @@ const Login = () => {
         withCredentials: true,
       });
       if (res.data.success) {
-        // Store token in cookie
+        // Store token in cookie and Redux
         if (res.data.token) {
           Cookies.set("token", res.data.token, { 
             expires: 7, // expires in 7 days
-            secure: true,
-            sameSite: "strict"
+            path: '/', // make cookie available for all paths
+            sameSite: 'lax' // less restrictive than 'strict'
           });
+          
+          // Set token in Redux
+          dispatch(setToken(res.data.token));
+          
+          // Set token in axios defaults
+          axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         }
+        
+        // Store user data
         localStorage.setItem("user", JSON.stringify(res.data.user));
         dispatch(setUser(res.data.user));
         navigate("/");

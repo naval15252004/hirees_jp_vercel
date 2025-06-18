@@ -5,11 +5,12 @@ import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setUser } from "@/redux/authSlice";
+import { setUser, logout } from "@/redux/authSlice";
 import { toast } from "sonner";
 import { USER_API_END_POINT } from "@/utils/constant";
 import logo2 from "../../assets/logo2.svg";
 import { Icon } from "@iconify/react";
+import Cookies from "js-cookie";
 
 const Navbar = React.memo(() => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +27,18 @@ const Navbar = React.memo(() => {
         withCredentials: true,
       });
       if (res.data.status) {
-        dispatch(setUser(null));
+        // Clear token from cookie
+        Cookies.remove("token");
+        
+        // Clear token from axios defaults
+        delete axios.defaults.headers.common['Authorization'];
+        
+        // Clear Redux state
+        dispatch(logout());
+        
+        // Clear localStorage
+        localStorage.removeItem("user");
+        
         navigate("/");
         toast.success(res.data.message);
       }
